@@ -1,4 +1,4 @@
-FROM local/dpdk:17.11.4-onbuild
+FROM shrewdthingsltd/dpdk:17.11.4-onbuild
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   autoconf automake \

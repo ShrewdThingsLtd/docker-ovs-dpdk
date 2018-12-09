@@ -1,4 +1,4 @@
-FROM shrewdthingsltd/ovs-dpdk:prebuild
+FROM shrewdthingsltd/docker-ovs-dpdk:ovs-2.10.1-prebuild
 
 RUN . ${RTE_SDK}/dpdk_env.sh; \
   cd ${OVS_DIR} \

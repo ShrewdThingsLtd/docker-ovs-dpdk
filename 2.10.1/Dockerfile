@@ -1,4 +1,4 @@
-FROM shrewdthingsltd/dpdk:17.11.4-onbuild
+FROM shrewdthingsltd/docker-dpdk:dpdk-17.11.4
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   autoconf automake \

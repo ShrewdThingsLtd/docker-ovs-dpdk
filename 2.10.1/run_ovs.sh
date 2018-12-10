@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 
 #export DB_SOCK=/usr/local/var/run/openvswitch/db.sock
 export OVS_DIR=/usr/src/ovs
@@ -11,16 +12,20 @@ mkdir -p $OVS_RUN_DIR
 mkdir -p $OVS_ETC_DIR
 mkdir -p $OVS_LOG_DIR
 
-DB_SOCK=/usr/local/var/run/openvswitch/db.sock
+OVS_RUNTIME_DIR=/usr/local/var/run/openvswitch
+mkdir -p $OVS_RUNTIME_DIR
+DB_SOCK=$OVS_RUNTIME_DIR/db.sock
+
+sysctl -w vm.nr_hugepages=2048
+mkdir -p /mnt/huge
+#mount -t hugetlbfs -o pagesize=1G nodev /mnt/huge
+grep HugePages_ /proc/meminfo
 
 ovsdb-tool create /usr/local/etc/openvswitch/conf.db /usr/local/share/openvswitch/vswitch.ovsschema
 
 ovsdb-server \
   --remote=punix:$DB_SOCK \
   --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
-  --private-key=db:Open_vSwitch,SSL,private_key \
-  --certificate=Open_vSwitch,SSL,certificate \
-  --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert \
   --log-file=$OVS_LOG_DIR/ovsdb-server.log \
   --pidfile \
   --detach
@@ -37,4 +42,6 @@ ovs-vswitchd \
   -- unix:$DB_SOCK \
   --log-file=$OVS_LOG_DIR/ovs-vswitchd.log \
   --pidfile
+
+set +x
 

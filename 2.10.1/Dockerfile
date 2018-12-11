@@ -1,4 +1,6 @@
-FROM shrewdthingsltd/docker-dpdk:dpdk-17.11.4
+ARG BASE_IMG=shrewdthingsltd/docker-dpdk:dpdk-17.11.4
+FROM $BASE_IMG
+RUN echo "$BASE_IMG"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   autoconf automake \

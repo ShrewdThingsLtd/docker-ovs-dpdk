@@ -11,3 +11,4 @@ echo "Modifying DPDK configuration..."
 sed -i s/CONFIG_RTE_BUILD_COMBINE_LIBS=n/CONFIG_RTE_BUILD_COMBINE_LIBS=y/ $RTE_SDK/config/common_linuxapp
 sed -i s/CONFIG_RTE_LIBRTE_VHOST=n/CONFIG_RTE_LIBRTE_VHOST=y/ $RTE_SDK/config/common_linuxapp
 sed -i s/CONFIG_RTE_LIBRTE_VHOST_USER=y/CONFIG_RTE_LIBRTE_VHOST_USER=n/ $RTE_SDK/config/common_linuxapp
+

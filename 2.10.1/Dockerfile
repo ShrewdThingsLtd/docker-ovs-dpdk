@@ -1,10 +1,12 @@
 FROM shrewdthingsltd/docker-ovs-dpdk:ovs-2.10.1-prebuild
 
+RUN apt -y install iproute2 kmod sudo
+
 WORKDIR ${OVS_DIR}
 RUN . ${RTE_SDK}/dpdk_env.sh && ./boot.sh
 #  && sed -i s/DPDK_EXTRA_LIB="-lfuse"/#DPDK_EXTRA_LIB="-lfuse"/ ./configure \
 RUN . ${RTE_SDK}/dpdk_env.sh && ./configure --with-dpdk=${RTE_SDK}/${RTE_TARGET}
-RUN . ${RTE_SDK}/dpdk_env.sh && make install CFLAGS='-O3 -march=native'
+RUN . ${RTE_SDK}/dpdk_env.sh && make install CFLAGS='-O3 -march=native -mno-f16c'
 #RUN . ${RTE_SDK}/dpdk_env.sh && make clean
 
 ARG IMG_SRC_DIR=/usr/src

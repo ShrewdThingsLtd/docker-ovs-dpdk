@@ -11,6 +11,7 @@ RUN . ${DPDK_DIR}/dpdk_env.sh && make install CFLAGS='-O3 -march=native'
 
 ARG IMG_SRC_DIR=/usr/src
 WORKDIR ${IMG_SRC_DIR}
+COPY ovs_utils.sh ovs_utils.sh
 COPY run_ovs.sh run_ovs.sh
 
 CMD ["./run_ovs.sh"]

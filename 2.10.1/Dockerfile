@@ -1,6 +1,6 @@
 FROM shrewdthingsltd/docker-ovs-dpdk:ovs-2.10.1-prebuild
 
-RUN apt -y install iproute2 kmod sudo
+RUN apt-get -y install iproute2 kmod sudo
 
 WORKDIR ${OVS_DIR}
 RUN . ${DPDK_DIR}/dpdk_env.sh && ./boot.sh

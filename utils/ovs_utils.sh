@@ -4,7 +4,7 @@ set -x
 
 ovs_prerequisites() {
 
-	echo 'autoconf automake libtool openssl libssl-dev python libcap-ng-dev python-six libfuse-dev iproute2 kmod sudo'
+	echo 'autoconf automake libtool openssl libssl-dev python libpcap-dev libcap-ng-dev python-six libfuse-dev iproute2 kmod sudo'
 }
 
 ovs_clone() {

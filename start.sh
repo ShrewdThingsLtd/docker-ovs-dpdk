@@ -1,18 +1,34 @@
 #!/bin/bash
 
 OVS_IMG=${1:-local}
+OVS_VERSION=${3:-v2.10.1}
 
+docker volume rm $(docker volume ls -qf dangling=true)
+#docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+docker rmi $(docker images | grep "none" | awk '/ / { print $3 }')
+docker rm $(docker ps -qa --no-trunc --filter "status=exited")
 
 case ${OVS_IMG} in
 	"hub")
-	OVS_IMG=shrewdthingsltd/docker-ovs-dpdk:ovs-2.10.1
+	OVS_IMG=shrewdthingsltd/docker-ovs-dpdk:ovs-$OVS_VERSION
 	docker pull $OVS_IMG
 	;;
 	*)
-	./2.10.1/build_ovs.sh
-	OVS_IMG=local/docker-ovs-dpdk:ovs-2.10.1
+	IMG_BASE=local/docker-ovs-dpdk:ovs-$OVS_VERSION-prebuild
+	OVS_IMG=local/docker-ovs-dpdk:ovs-$OVS_VERSION
+	docker build \
+		-t $OVS_IMG \
+		--build-arg IMG_BASE=$IMG_BASE \
+		./
 	;;
 esac
 
-docker run -ti --net=host --privileged -v /mnt/huge:/mnt/huge --device=/dev/uio0:/dev/uio0 $OVS_IMG /bin/bash
-
+docker run \
+	-ti \
+	--net=host \
+	--privileged \
+	-v /mnt/huge:/mnt/huge \
+	--device=/dev/uio0:/dev/uio0 \
+	$OVS_IMG \
+	/bin/bash

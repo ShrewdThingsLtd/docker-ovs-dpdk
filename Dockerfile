@@ -4,15 +4,13 @@ ARG IMG_BASE=shrewdthingsltd/docker-ovs-dpdk:ovs-v2.10.1-prebuild
 FROM $IMG_BASE
 
 COPY utils/*.sh ${SRC_DIR}/utils/
+COPY env/*.sh ${SRC_DIR}/env/
 
-RUN \
-	. ${SRC_DIR}/utils/exec_utils.sh; \
-	. ${SRC_DIR}/utils/ovs_utils.sh; \
-	. ${SRC_DIR}/app_env.sh; \
+RUN . ${SRC_DIR}/app-entrypoint.sh; \
 	ovs_build
 
-COPY ovs_run.sh ${SRC_DIR}/
+WORKDIR ${OVS_DIR}
 
-WORKDIR ${SRC_DIR}
+#CMD ["./ovs_run.sh"]
 
-CMD ["./ovs_run.sh"]
+COPY runtime/*.sh ${SRC_DIR}/runtime/

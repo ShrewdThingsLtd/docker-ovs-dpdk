@@ -2,14 +2,16 @@
 
 set -x
 
-export OVS_RUNTIME_DIR=/usr/local/var/run/openvswitch
-export OVS_SHARE_DIR=/usr/local/share/openvswitch
-export OVS_ETC_DIR=/usr/local/etc/openvswitch
-export OVS_LOG_DIR=/usr/local/var/log/openvswitch
-export PATH=$PATH:$OVS_SHARE_DIR/scripts
+ovs_mount_hugepages() {
 
+	sysctl -w vm.nr_hugepages=$OVS_2M_HUGEPAGES
+	mkdir -p /mnt/huge
+	#mount -t hugetlbfs -o pagesize=1G nodev /mnt/huge
+	mount -t hugetlbfs nodev /mnt/huge
+	grep HugePages_ /proc/meminfo
+}
 
-function ovsdb_reset {
+ovsdb_reset() {
 
 	mkdir -p $OVS_ETC_DIR
 	mkdir -p $OVS_LOG_DIR
@@ -19,13 +21,13 @@ function ovsdb_reset {
 	ovs-vsctl --no-wait init
 }
 
-function ovs_cmd {
+ovs_cmd() {
 
-        local ovs_exec="ovs-vsctl $OVS_MODIFIERS ${@:1}"
+	local ovs_exec="ovs-vsctl $OVS_MODIFIERS ${@:1}"
 	eval "${ovs_exec}"
 }
 
-function ovs_clear_br {
+ovs_clear_br() {
 
         local br_inst=$1
 
@@ -47,7 +49,7 @@ function ovs_clear_br {
         done
 }
 
-function ovs_delete_br {
+ovs_delete_br() {
 
         local br_inst=$1
 
@@ -79,14 +81,14 @@ function ovs_delete_br {
         fi
 }
 
-function ovs_wipeout {
+ovs_wipeout() {
 
 	ovs_delete_br
 	ovs-ctl stop
 	ovsdb_reset
 }
 
-function ovsdb_server_start {
+ovsdb_server_start() {
 
 	ovsdb-server \
 		--remote=punix:$OVS_RUNTIME_DIR/db.sock \
@@ -95,13 +97,27 @@ function ovsdb_server_start {
 	ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
 }
 
-function ovs_restart {
+ovs_restart() {
 
 	ovs-ctl --no-ovsdb-server --db-sock="$OVS_RUNTIME_DIR/db.sock" restart
 	ovs-vsctl get Open_vSwitch . dpdk_initialized
 	ovs-vswitchd --version
 	ovs-vsctl get Open_vSwitch . dpdk_version
 	ovs-ctl status
+}
+
+ovs_run() {
+
+	exec_tgt "/" "modprobe openvswitch"
+	exec_tgt "${TGT_SRC_DIR}" "\
+		export DPDK_DIR=${TGT_SRC_DIR}/dpdk; \
+		. ${TGT_SRC_DIR}/docker-ovs-dpdk/env/ovs_prebuild_env.sh; \
+		. ${TGT_SRC_DIR}/docker-dpdk/utils/dpdk_utils.sh; \
+		dpdk_igb_uio_install"
+	ovs_wipeout
+	ovs_mount_hugepages
+	ovsdb_server_start
+	ovs_restart
 }
 
 set +x

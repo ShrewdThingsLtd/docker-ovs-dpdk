@@ -17,3 +17,5 @@ RUN . ${SRC_DIR}/app-entrypoint.sh; \
 	ovs_clone
 
 WORKDIR ${OVS_DIR}
+
+COPY runtime/*.sh ${SRC_DIR}/runtime/

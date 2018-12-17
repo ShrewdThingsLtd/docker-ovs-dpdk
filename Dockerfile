@@ -11,11 +11,9 @@ ENV OVS_VERSION=$IMG_OVS_VERSION
 ENV OVS_DIR=${SRC_DIR}/ovs
 
 COPY utils/*.sh ${SRC_DIR}/utils/
+COPY env/*.sh ${SRC_DIR}/env/
 
-RUN \
-	. ${SRC_DIR}/utils/exec_utils.sh; \
-	. ${SRC_DIR}/utils/git_utils.sh; \
-	. ${SRC_DIR}/utils/ovs_utils.sh; \
+RUN . ${SRC_DIR}/app-entrypoint.sh; \
 	ovs_clone
 
 WORKDIR ${OVS_DIR}

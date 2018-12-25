@@ -44,16 +44,16 @@ ovs_dpdk() {
 	shift
 
 	case ${cmd} in
-		"add-br")
+		'add-br')
 		ovs_dpdk_add_br $@
 		;;
-		"add-dummy-port")
+		'add-dummy-port')
 		ovs_dpdk_add_dummy_port $@
 		;;
-		"add-dpdk-port")
+		'add-dpdk-port')
 		ovs_dpdk_add_dpdk_port $@
 		;;
-		"add-flow")
+		'add-flow')
 		ovs_dpdk_add_flow $@
 		;;
 		*)

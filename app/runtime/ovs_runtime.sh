@@ -109,11 +109,7 @@ ovs_restart() {
 ovs_run() {
 
 	exec_tgt "/" "modprobe openvswitch"
-	exec_tgt "${TGT_SRC_DIR}" "\
-		export DPDK_DIR=${TGT_SRC_DIR}/dpdk; \
-		. ${TGT_SRC_DIR}/docker-ovs-dpdk/env/ovs_prebuild_env.sh; \
-		. ${TGT_SRC_DIR}/docker-dpdk/utils/dpdk_utils.sh; \
-		dpdk_igb_uio_install"
+	dpdk_igb_uio_install
 	ovs_wipeout
 	ovs_mount_hugepages
 	ovsdb_server_start

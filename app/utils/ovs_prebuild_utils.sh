@@ -34,5 +34,12 @@ ovs_build() {
 	cd -
 }
 
+dpdk_configure() {
+
+	exec_apt_install "$(ovs_prerequisites)"
+	#exec_apt_clean
+	ovs_dpdk_config
+}
+
 set +x
 

@@ -10,12 +10,12 @@ ENV OVS_REPO="${IMG_OVS_REPO}"
 ENV OVS_VERSION=$IMG_OVS_VERSION
 ENV OVS_DIR=${SRC_DIR}/ovs
 
-COPY utils/*.sh ${SRC_DIR}/utils/
-COPY env/*.sh ${SRC_DIR}/env/
+COPY app/utils/*.sh ${SRC_DIR}/utils/
+COPY app/env/*.sh ${SRC_DIR}/env/
+COPY app/entrypoint/*.sh ${SRC_DIR}/
 
-RUN . ${SRC_DIR}/app-entrypoint.sh; \
-	ovs_clone
+RUN ovs_clone
+
+COPY app/runtime/*.sh ${SRC_DIR}/runtime/
 
 WORKDIR ${OVS_DIR}
-
-COPY runtime/*.sh ${SRC_DIR}/runtime/
